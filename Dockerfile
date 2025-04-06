@@ -7,6 +7,8 @@ WORKDIR /app
 # Copy package.json and package-lock.json (if exists)
 COPY package*.json ./
 
+COPY server.js ./ 
+
 # Install dependencies (including Jest)
 RUN npm install
 
