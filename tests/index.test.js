@@ -9,7 +9,7 @@ test("The boiling point of water is 100c and 212 f", () => {
 } );
 
 test("The negative values cross over of -40c should be -40", () => {
-    expect(celsiusToFahrenheit(-40)).toBe(-70);
+    expect(celsiusToFahrenheit(-40)).toBe(-40);
 });
 
 test("The dicimal precision when 37.5c should be 99.5f", () => {

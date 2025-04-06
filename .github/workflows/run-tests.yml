@@ -7,5 +7,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4 # Checks out your code
+      - uses: actions/setup-node@v3
+        with:
+        node-version: "18"
+        cache: "npm"
       - run: docker build -t temp-converter-tester .
       - run: docker run --rm temp-converter-tester
+      - run: npm install
+      - run: npm run test:api
+
+      - name: Deploy
+        uses: akhileshns/heroku-deploy@v3
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: "tempcels"
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          healthcheck: "https://tempcels.herokuapp.com/health"
+          checkstring: "OK"
+          rollbackonhealthcheckfailed: true
