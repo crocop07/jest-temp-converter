@@ -4,6 +4,10 @@ const { celsiusToFahrenheit } = require('./src/index');
 const app = express();
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.status(200).send('Temperature Converter API is running');
+});
+
 // Your temperature converter as an API
 app.post('/convert', (req, res) => {
   const { celsius } = req.body;
@@ -28,3 +32,8 @@ if (require.main === module) {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 
+// After all your routes
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
