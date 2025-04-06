@@ -1,22 +1,23 @@
-name: Test Temperature Converter
-
-on: [push, pull_request] # Runs on git push/PR
-
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4 # Checks out your code
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
-        cache: "npm"
+          cache: "npm"
       - run: docker build -t temp-converter-tester .
       - run: docker run --rm temp-converter-tester
       - run: npm install
       - run: npm run test:api
 
-      - name: Deploy
-        uses: akhileshns/heroku-deploy@v3
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: akhileshns/heroku-deploy@v3
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: "tempcels"
