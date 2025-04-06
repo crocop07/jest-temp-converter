@@ -1,3 +1,5 @@
+name: Test and Deploy Temperature Converter
+
 on:
   push:
     branches: [main]
@@ -9,12 +11,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # Set up Node.js with caching
       - uses: actions/setup-node@v3
         with:
+          node-version: "18"
           cache: "npm"
+
+      # Install dependencies before Docker build
+      - run: npm install
+
+      # Docker operations
       - run: docker build -t temp-converter-tester .
       - run: docker run --rm temp-converter-tester
-      - run: npm install
+
+      # API tests
       - run: npm run test:api
 
   deploy:
@@ -23,7 +34,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: akhileshns/heroku-deploy@v3
+
+      # Use pinned version of heroku-deploy
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: "tempcels"
